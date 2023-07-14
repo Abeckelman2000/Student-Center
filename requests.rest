@@ -1,12 +1,15 @@
-GET http://localhost:3000/login
+GET http://localhost:3000/api/login
 
 
 ###
 
-POST http://localhost:3000/login
+POST http://localhost:3000/api/login
 Content-Type: application/json
 
 {
-  "name": "Austin",
-  "password": "1942"
+  "username": "tbeckelman98",
+  "password": "71598",
+  "FirstName": "Travis",
+  "LastName": "Beckelman"
 }
+
