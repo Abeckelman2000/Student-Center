@@ -7,9 +7,23 @@ POST http://localhost:3000/api/login
 Content-Type: application/json
 
 {
-  "username": "tbeckelman98",
-  "password": "71598",
-  "FirstName": "Travis",
-  "LastName": "Beckelman"
+  "username": "Cock&ALittleBitOfBalls",
+  "password": "1942",
+  "FirstName": "Justin",
+  "LastName": "Schermerhorn"
 }
 
+###
+
+GET http://localhost:3000/api/createaccount
+###
+POST http://localhost:3000/api/createaccount
+Content-Type: application/json
+
+{
+
+}
+
+###
+
+GET http://localhost:3000/profile

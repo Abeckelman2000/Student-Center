@@ -3,6 +3,7 @@ const app = express()
 const jwt = require('jsonwebtoken')
 const login = require('./routes/router-login')
 const createAccount = require('./routes/router-create-account')
+const profile = require(`./routes/router-profile`)
 
 
 
@@ -18,7 +19,8 @@ app.use(express.json())
 
 // Define Routes
 app.use(`/api/login`, login)
-app.use('/api/createaccount', createAccount)
+app.use(`/api/createaccount`, createAccount)
+app.use(`/profile`, profile)
 
 
 app.listen(3000, ()=>{

@@ -1,60 +1,69 @@
 const bcrypt = require('bcrypt')
 const express = require('express')
 const {getStudents} = require('../utils/database')
+const jwt = require('jsonwebtoken')
 
 let listStudents = null
 
+
 const getLogin = async (req, res)=>{
   listStudents = await getStudents()
-  console.log(listStudents)
   res.json(listStudents)
 
 }
 
 const postLogin = async (req, res)=>{
-   if(!listStudents){
-    listStudents = await getStudents((err, results)=>{
-      if(err){
-        console.log(err)
-      }
-      else{
-        console.log('yoyoyooy')
-      }
-    })
+  listStudents = await getStudents((err, results)=>{
+    if(err){
+      console.log(err)
+    }
+    else{
+      console.log('yoyoyooy')
+    }
+  })
+
+
+   const user = listStudents.find(user => user.name === req.body.name)
+   if(user == null){
+     res.status(404).send('Invalid credentials or email not registered. Please try again or create an account')
+   }
+   else{
+     console.log('User exists in the database, continuing verification...')
    }
 
+   try{
+    bcrypt.compare(req.body.password, user.password)
+    //res.status(200).send("Password decrypted and verified. Logging in")
+   }
+   catch{
+     res.status(500).send('Internal server error')    // status 500: Internal server error
+   }
 
-   let {username, password, FirstName, LastName} = req.body
-   console.log(req.body)
-  if(!listStudents.includes(username)){
-    res.status(404).send('Email not registered. Please try again or create an account')
-  }
-  else{
-    res.status(201).send('User exists in database')
-  }
-  
+   //serializing user with JSON webtokens
+   console.log(typeof user)
+   const accessToken = jwt.sign(req.body.username, process.env.ACCESS_TOKEN_SECRET)
+   res.json({accessToken: accessToken})
 
-
-
-
-
-
-
-
-  // try{
-  //   const salt = await bcrypt.genSalt()
-  //   const hashedPassword = await bcrypt.hash(req.body.password, salt)
-  //   console.log(salt)
-  //   console.log(hashedPassword)
-  //   const user = {name: req.body.name, password: hashedPassword}
-  //   res.status(201).send()
-  // }
-  // catch{
-  //   res.status(500).send()    // status 500: Internal server error
-  // }
 }
+
+function authenticateToken(req, res, next){
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+  if(token == null) return res.sendStatus(401)
+
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) =>{
+    if (err) return res.sendStatus(403)
+    req.user = user
+    next()
+  })
+
+
+}
+
 
 module.exports = {
   getLogin,
-  postLogin
+  postLogin,
+  authenticateToken
 }

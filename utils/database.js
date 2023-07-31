@@ -26,9 +26,39 @@ async function getStudents(){
   return results
 }
 
-const students = getStudents()
-console.log(students)
+async function addStudent(student) {
+  const insertQuery = `INSERT INTO student SET ?`
+  let query = dbPool.query(insertQuery, student, (err, result) =>{
+    if(err) throw err
+    console.log(result)
+  })
+}
+
+// async function addStudent(student){
+//   const insertQuery = `INSERT INTO student (username, password, FirstName, LastName) VALUES (${student.username}, ${student.password}, ${student.FirstName}, ${student.LastName})`
+//   const { username, password, FirstName, LastName } = student
+
+//   try{
+//     const result = await dbPool.query(insertQuery)
+//   } catch (err){
+//     console.error('Error adding student: ', err)
+//     throw err
+//   }
+// }
+
+// Close the database pool when your application is shutting down
+process.on('SIGINT', () => {
+  dbPool.end((err) => {
+    if (err) {
+      console.error('Error closing the database pool:', err);
+    } else {
+      console.log('Database pool closed.');
+    }
+    process.exit();
+  });
+});
 
 module.exports = {
-  getStudents
+  getStudents,
+  addStudent
 }
