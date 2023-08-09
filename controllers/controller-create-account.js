@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt')
 const {getStudents, addStudent} = require('../utils/database')
+const {generateRandom8Digit} = require('../utils/random')
 
 const getPage = async (req, res)=>{
-  res.status(200).send("Yo")
+  res.status(200).send()
 }
 const postCreateAccount = async (req, res)=>{
   //Authenticate user
@@ -11,7 +12,9 @@ const postCreateAccount = async (req, res)=>{
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
     console.log(salt)
     console.log(hashedPassword)
-    const user = {username: req.body.username, password: hashedPassword, FirstName: req.body.FirstName, LastName: req.body.LastName}
+
+
+    const user = {username: req.body.username, password: hashedPassword, FirstName: req.body.FirstName, LastName: req.body.LastName, studentID: generateRandom8Digit()}
 
     console.log(user)
     let query = addStudent(user)
